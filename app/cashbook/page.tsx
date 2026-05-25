@@ -32,9 +32,9 @@ export default function CashbookPage() {
 
   useEffect(() => { load() }, [load])
   useEffect(() => {
-    fetch('/api/vendors').then(r => r.json()).then(d => setVendors(d.map((v: any) => v.name)))
-    fetch('/api/accounts').then(r => r.json()).then(d => setAccounts(d.map((a: any) => a.name)))
-    fetch('/api/funds').then(r => r.json()).then(d => setFunds(d.map((f: any) => f.name)))
+    fetch('/api/vendors').then(r => r.ok ? r.json() : []).then(d => Array.isArray(d) && setVendors(d.map((v: any) => v.name))).catch(() => {})
+    fetch('/api/accounts').then(r => r.ok ? r.json() : []).then(d => Array.isArray(d) && setAccounts(d.map((a: any) => a.name))).catch(() => {})
+    fetch('/api/funds').then(r => r.ok ? r.json() : []).then(d => Array.isArray(d) && setFunds(d.map((f: any) => f.name))).catch(() => {})
   }, [])
 
   const handleDelete = async (id: number) => {
