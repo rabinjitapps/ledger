@@ -42,6 +42,7 @@ export interface Vendor {
   address:    string | null
   gst:        string | null
   email:      string | null
+  pan:        string | null
   created_at: string
 }
 
@@ -84,21 +85,25 @@ export interface BillPayment {
 }
 
 export interface Bill {
-  id:          number
-  date:        string
-  bill_no:     string
-  party:       string
-  total:       number
-  paid_amount: number
-  due_date:    string | null
-  status:      'UNPAID' | 'PARTIAL' | 'PAID'
-  notes:       string | null
-  account:     string | null
-  fund_name:   string | null
-  created_at:  string
-  items?:      BillItem[]
-  deductions?: BillDeduction[]
-  payments?:   BillPayment[]
+  id:            number
+  date:          string
+  bill_no:       string
+  party:         string
+  total:         number
+  paid_amount:   number
+  due_date:      string | null
+  status:        'UNPAID' | 'PARTIAL' | 'PAID'
+  notes:         string | null
+  account:       string | null
+  fund_name:     string | null
+  invoice_no:    string | null
+  invoice_date:  string | null
+  invoice_value: number | null
+  vendor_pan:    string | null
+  created_at:    string
+  items?:        BillItem[]
+  deductions?:   BillDeduction[]
+  payments?:     BillPayment[]
 }
 
 export interface CashbookEntry {
