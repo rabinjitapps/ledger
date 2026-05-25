@@ -108,7 +108,13 @@ export default function VendorsPage() {
 }
 
 function VendorModal({ vendor, onClose, onSaved }: { vendor: Vendor | null; onClose: () => void; onSaved: () => void }) {
-  const [form, setForm] = useState({ name: '', contact: '', address: '', gst: '', email: '', ...(vendor || {}) })
+  const [form, setForm] = useState({
+    name:    vendor?.name    ?? '',
+    contact: vendor?.contact ?? '',
+    address: vendor?.address ?? '',
+    gst:     vendor?.gst     ?? '',
+    email:   vendor?.email   ?? '',
+  })
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
