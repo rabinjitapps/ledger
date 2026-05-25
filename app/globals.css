@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0F1117;
+  --bg2: #1A1D27;
+  --bg3: #22263A;
+  --accent: #F5A623;
+  --accent2: #E8882A;
+  --text: #F0F0F0;
+  --subtext: #9099B0;
+  --success: #2ECC71;
+  --danger: #E74C3C;
+  --info: #3498DB;
+  --border: #2E3350;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sora', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  height: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Selection */
+::selection { background: var(--accent); color: var(--bg); }
+
+@layer components {
+  .card {
+    @apply bg-bg2 border border-border rounded-xl p-5;
+  }
+
+  .btn-primary {
+    @apply bg-accent text-bg font-semibold px-4 py-2 rounded-lg hover:bg-accent2 transition-colors cursor-pointer text-sm disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-bg3 text-text font-medium px-4 py-2 rounded-lg hover:bg-border transition-colors cursor-pointer text-sm border border-border;
+  }
+
+  .btn-danger {
+    @apply bg-danger/20 text-danger font-medium px-4 py-2 rounded-lg hover:bg-danger/30 transition-colors cursor-pointer text-sm border border-danger/30;
+  }
+
+  .btn-info {
+    @apply bg-info/20 text-info font-medium px-4 py-2 rounded-lg hover:bg-info/30 transition-colors cursor-pointer text-sm border border-info/30;
+  }
+
+  .btn-success {
+    @apply bg-success/20 text-success font-medium px-4 py-2 rounded-lg hover:bg-success/30 transition-colors cursor-pointer text-sm border border-success/30;
+  }
+
+  .input {
+    @apply bg-bg3 border border-border rounded-lg px-3 py-2 text-text text-sm w-full outline-none focus:border-accent transition-colors placeholder:text-subtext;
+  }
+
+  .select {
+    @apply bg-bg3 border border-border rounded-lg px-3 py-2 text-text text-sm w-full outline-none focus:border-accent transition-colors cursor-pointer;
+  }
+
+  .label {
+    @apply text-subtext text-xs font-medium uppercase tracking-wider mb-1 block;
+  }
+
+  .badge-paid   { @apply bg-success/20 text-success text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-unpaid { @apply bg-danger/20 text-danger text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-partial { @apply bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full font-medium; }
+
+  .stat-card {
+    @apply card flex-1 min-w-0;
+  }
+
+  .table-row {
+    @apply border-b border-border/50 hover:bg-bg3/50 transition-colors;
+  }
+
+  .table-th {
+    @apply text-subtext text-xs font-semibold uppercase tracking-wider py-3 px-4 text-left bg-bg3/50;
+  }
+
+  .table-td {
+    @apply py-3 px-4 text-sm text-text;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal-box {
+    @apply bg-bg2 border border-border rounded-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl;
+    animation: slideUp 0.25s ease;
+  }
+
+  .nav-tab {
+    @apply px-5 py-3 text-subtext text-sm font-medium cursor-pointer transition-all border-b-2 border-transparent hover:text-text whitespace-nowrap;
+  }
+
+  .nav-tab.active {
+    @apply text-accent border-accent;
+  }
+
+  .cr-text { @apply text-success; }
+  .dr-text { @apply text-danger; }
+}
+
+/* Accent top bar */
+.accent-bar {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  height: 3px;
+}
+
+/* Glow effects */
+.glow-accent { box-shadow: 0 0 20px rgba(245, 166, 35, 0.15); }
+.glow-success { box-shadow: 0 0 20px rgba(46, 204, 113, 0.1); }
+.glow-danger  { box-shadow: 0 0 20px rgba(231, 76, 60, 0.1); }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
