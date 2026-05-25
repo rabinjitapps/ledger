@@ -50,28 +50,6 @@ function ChangePasswordModal({ onClose }: { onClose: () => void }) {
     else { const d = await res.json(); toast.error(d.error || 'Failed to change password') }
   }
 
-  const Field = ({ label, field }: { label: string; field: 'current' | 'next' | 'confirm' }) => (
-    <div>
-      <label className="label">{label}</label>
-      <div className="relative">
-        <input
-          className="input pr-9"
-          type={show[field] ? 'text' : 'password'}
-          value={form[field]}
-          onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
-          required
-        />
-        <button
-          type="button"
-          onClick={() => setShow(s => ({ ...s, [field]: !s[field] }))}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-subtext hover:text-text"
-        >
-          {show[field] ? <EyeOff size={14} /> : <Eye size={14} />}
-        </button>
-      </div>
-    </div>
-  )
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-box max-w-sm p-6" onClick={e => e.stopPropagation()}>
@@ -86,9 +64,39 @@ function ChangePasswordModal({ onClose }: { onClose: () => void }) {
           <button onClick={onClose} className="ml-auto text-subtext hover:text-text"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <Field label="Current Password" field="current" />
-          <Field label="New Password" field="next" />
-          <Field label="Confirm New Password" field="confirm" />
+          <div>
+            <label className="label">Current Password</label>
+            <div className="relative">
+              <input className="input pr-9" type={show.current ? 'text' : 'password'} value={form.current}
+                onChange={e => setForm(f => ({ ...f, current: e.target.value }))} required />
+              <button type="button" onClick={() => setShow(s => ({ ...s, current: !s.current }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-subtext hover:text-text">
+                {show.current ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="label">New Password</label>
+            <div className="relative">
+              <input className="input pr-9" type={show.next ? 'text' : 'password'} value={form.next}
+                onChange={e => setForm(f => ({ ...f, next: e.target.value }))} required />
+              <button type="button" onClick={() => setShow(s => ({ ...s, next: !s.next }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-subtext hover:text-text">
+                {show.next ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="label">Confirm New Password</label>
+            <div className="relative">
+              <input className="input pr-9" type={show.confirm ? 'text' : 'password'} value={form.confirm}
+                onChange={e => setForm(f => ({ ...f, confirm: e.target.value }))} required />
+              <button type="button" onClick={() => setShow(s => ({ ...s, confirm: !s.confirm }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-subtext hover:text-text">
+                {show.confirm ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+          </div>
           <div className="flex gap-2 pt-1">
             <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2" disabled={loading}>
               {loading ? <span className="w-4 h-4 border-2 border-bg/30 border-t-bg rounded-full animate-spin" /> : <KeyRound size={14} />}
