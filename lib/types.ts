@@ -1,3 +1,10 @@
+export interface TrialBalanceRow {
+  account:    string
+  totalCR:    number
+  totalDR:    number
+  netBalance: number
+}
+
 export interface DashboardStats {
   totalCR:           number
   totalDR:           number
