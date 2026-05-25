@@ -11,12 +11,12 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { name, contact, address, gst, email } = body
+  const { name, contact, address, gst, email, pan } = body
   if (!name) return NextResponse.json({ error: 'Name required' }, { status: 400 })
   
   const { data, error } = await db()
     .from('vendors')
-    .upsert({ name, contact, address, gst, email, created_at: new Date().toISOString() }, { onConflict: 'name' })
+    .upsert({ name, contact, address, gst, email, pan, created_at: new Date().toISOString() }, { onConflict: 'name' })
     .select()
     .single()
   
