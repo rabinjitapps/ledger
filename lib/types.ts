@@ -1,3 +1,19 @@
+export interface DashboardStats {
+  totalCR:           number
+  totalDR:           number
+  netBalance:        number
+  totalBills:        number
+  totalBillAmount:   number
+  paidBillAmount:    number
+  unpaidBillAmount:  number
+  totalCashReceipts: number
+  totalCashPayments: number
+  accountBalances:   { name: string; balance: number }[]
+  recentLedger:      LedgerEntry[]
+  overdueBills:      Bill[]
+  monthlyFlow:       { month: string; cr: number; dr: number }[]
+}
+
 export interface Account {
   name:       string
   balance:    number
