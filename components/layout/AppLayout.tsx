@@ -5,8 +5,9 @@ import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, BookOpen, FileText, Users, BookMarked,
   Building2, Landmark, Scale, BarChart3, LogOut, Menu, X,
-  ChevronRight, UserCog,
+  ChevronRight, UserCog, KeyRound, Eye, EyeOff,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const NAV = [
   { href: '/dashboard',     label: 'Dashboard',     icon: LayoutDashboard, perm: 'dashboard'     },
@@ -29,9 +30,82 @@ interface SessionData {
   permissions?: string[]
 }
 
+function ChangePasswordModal({ onClose }: { onClose: () => void }) {
+  const [form, setForm] = useState({ current: '', next: '', confirm: '' })
+  const [show, setShow] = useState({ current: false, next: false, confirm: false })
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (form.next.length < 4) { toast.error('New password must be at least 4 characters'); return }
+    if (form.next !== form.confirm) { toast.error('Passwords do not match'); return }
+    setLoading(true)
+    const res = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword: form.current, newPassword: form.next }),
+    })
+    setLoading(false)
+    if (res.ok) { toast.success('Password changed successfully'); onClose() }
+    else { const d = await res.json(); toast.error(d.error || 'Failed to change password') }
+  }
+
+  const Field = ({ label, field }: { label: string; field: 'current' | 'next' | 'confirm' }) => (
+    <div>
+      <label className="label">{label}</label>
+      <div className="relative">
+        <input
+          className="input pr-9"
+          type={show[field] ? 'text' : 'password'}
+          value={form[field]}
+          onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShow(s => ({ ...s, [field]: !s[field] }))}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-subtext hover:text-text"
+        >
+          {show[field] ? <EyeOff size={14} /> : <Eye size={14} />}
+        </button>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-box max-w-sm p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center">
+            <KeyRound size={18} className="text-accent" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-text">Change Password</h2>
+            <p className="text-subtext text-sm">Update admin password</p>
+          </div>
+          <button onClick={onClose} className="ml-auto text-subtext hover:text-text"><X size={18} /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <Field label="Current Password" field="current" />
+          <Field label="New Password" field="next" />
+          <Field label="Confirm New Password" field="confirm" />
+          <div className="flex gap-2 pt-1">
+            <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2" disabled={loading}>
+              {loading ? <span className="w-4 h-4 border-2 border-bg/30 border-t-bg rounded-full animate-spin" /> : <KeyRound size={14} />}
+              {loading ? 'Saving…' : 'Change Password'}
+            </button>
+            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true)
   const [session, setSession] = useState<SessionData>({ type: null })
+  const [showChangePw, setShowChangePw] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -140,8 +214,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           )}
         </nav>
 
-        {/* Logout */}
-        <div className="border-t border-border p-2">
+        {/* Bottom actions */}
+        <div className="border-t border-border p-2 space-y-1">
+          {isAdmin && (
+            <button
+              onClick={() => setShowChangePw(true)}
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-subtext hover:text-accent hover:bg-accent/10 transition-all"
+              title={!open ? 'Change Password' : undefined}
+            >
+              <KeyRound size={17} className="shrink-0" />
+              {open && <span>Change Password</span>}
+            </button>
+          )}
           <button
             onClick={logout}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-subtext hover:text-danger hover:bg-danger/10 transition-all"
@@ -175,6 +259,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           onClick={() => setOpen(false)}
         />
       )}
+
+      {/* Change Password Modal */}
+      {showChangePw && <ChangePasswordModal onClose={() => setShowChangePw(false)} />}
     </div>
   )
 }
