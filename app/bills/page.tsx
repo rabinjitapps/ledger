@@ -162,7 +162,17 @@ function BillDetails({ billId }: { billId: number }) {
   }, [billId])
   if (!data) return <div className="text-subtext text-sm">Loading…</div>
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+    <div className="space-y-4 text-sm">
+      {/* Invoice Info */}
+      {(data.invoice_no || data.invoice_date || data.invoice_value || data.vendor_pan) && (
+        <div className="bg-bg3 rounded-lg px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+          {data.invoice_no    && <div><p className="text-subtext text-xs uppercase tracking-wider mb-0.5">Invoice No</p><p className="text-text font-medium font-mono">{data.invoice_no}</p></div>}
+          {data.invoice_date  && <div><p className="text-subtext text-xs uppercase tracking-wider mb-0.5">Invoice Date</p><p className="text-text">{formatDate(data.invoice_date)}</p></div>}
+          {data.invoice_value && <div><p className="text-subtext text-xs uppercase tracking-wider mb-0.5">Invoice Value</p><p className="text-text font-mono">{formatCurrency(data.invoice_value)}</p></div>}
+          {data.vendor_pan    && <div><p className="text-subtext text-xs uppercase tracking-wider mb-0.5">Vendor PAN</p><p className="text-text font-mono">{data.vendor_pan}</p></div>}
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
         <p className="text-subtext text-xs uppercase tracking-wider mb-2">Line Items</p>
         {(data.items || []).map((item: any) => (
@@ -192,11 +202,12 @@ function BillDetails({ billId }: { billId: number }) {
         {data.notes && <p className="text-subtext mt-2 text-xs">Notes: {data.notes}</p>}
       </div>
     </div>
+    </div>
   )
 }
 
 function AddBillModal({ vendors, accounts, funds, onClose, onSaved }: any) {
-  const [form, setForm] = useState({ date: today(), bill_no: '', party: '', account: '', fund_name: '', due_date: '', notes: '' })
+  const [form, setForm] = useState({ date: today(), bill_no: '', party: '', account: '', fund_name: '', due_date: '', notes: '', invoice_no: '', invoice_date: '', invoice_value: '', vendor_pan: '' })
   const [items, setItems] = useState<BillItem[]>([])
   const [deductions, setDeductions] = useState<BillDeduction[]>([])
   const [newItem, setNewItem] = useState({ description: '', qty: '1', rate: '' })
@@ -251,6 +262,16 @@ function AddBillModal({ vendors, accounts, funds, onClose, onSaved }: any) {
           <div><label className="label">Party (Vendor) *</label>
             <input className="input" list="vendor-list" value={form.party} onChange={e => setForm(f => ({ ...f, party: e.target.value }))} required />
             <datalist id="vendor-list">{vendors.map((v: string) => <option key={v} value={v} />)}</datalist>
+          </div>
+
+          {/* Invoice details */}
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="label">Invoice No</label><input className="input" placeholder="Vendor's invoice number" value={form.invoice_no} onChange={e => setForm(f => ({ ...f, invoice_no: e.target.value }))} /></div>
+            <div><label className="label">Invoice Date</label><input className="input" type="date" value={form.invoice_date} onChange={e => setForm(f => ({ ...f, invoice_date: e.target.value }))} /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="label">Invoice Value (₹)</label><input className="input" type="number" step="0.01" min="0" placeholder="0.00" value={form.invoice_value} onChange={e => setForm(f => ({ ...f, invoice_value: e.target.value }))} /></div>
+            <div><label className="label">Vendor PAN</label><input className="input font-mono uppercase" placeholder="ABCDE1234F" value={form.vendor_pan} onChange={e => setForm(f => ({ ...f, vendor_pan: e.target.value.toUpperCase() }))} /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div><label className="label">Account</label>
