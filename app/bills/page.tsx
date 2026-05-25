@@ -29,9 +29,9 @@ export default function BillsPage() {
 
   useEffect(() => { load() }, [load])
   useEffect(() => {
-    fetch('/api/vendors').then(r => r.json()).then(d => setVendors(d.map((v: any) => v.name)))
-    fetch('/api/accounts').then(r => r.json()).then(d => setAccounts(d.map((a: any) => a.name)))
-    fetch('/api/funds').then(r => r.json()).then(d => setFunds(d.map((f: any) => f.name)))
+    fetch('/api/vendors').then(r => r.ok ? r.json() : []).then(d => Array.isArray(d) && setVendors(d.map((v: any) => v.name))).catch(() => {})
+    fetch('/api/accounts').then(r => r.ok ? r.json() : []).then(d => Array.isArray(d) && setAccounts(d.map((a: any) => a.name))).catch(() => {})
+    fetch('/api/funds').then(r => r.ok ? r.json() : []).then(d => Array.isArray(d) && setFunds(d.map((f: any) => f.name))).catch(() => {})
   }, [])
 
   const handleDelete = async (id: number) => {
@@ -352,7 +352,7 @@ function PaymentModal({ bill, accounts, onClose, onSaved }: any) {
     const amount = parseFloat(form.amount)
     if (!form.is_adjusted && (!amount || amount > remaining + 0.01)) { toast.error(`Amount must be > 0 and ≤ ${formatCurrency(remaining)}`); return }
     setLoading(true)
-    const res = await fetch('/api/bills/payment', {
+    const res = await fetch('/api/bill-payments', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bill_id: bill.id, ...form, amount: form.is_adjusted ? remaining : amount }),
     })
