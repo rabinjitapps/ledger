@@ -61,7 +61,7 @@ export default function VendorsPage() {
               <table className="w-full">
                 <thead>
                   <tr>
-                    {['ID','Name','Contact','Address','GST No','Email','Added'].map(h => (
+                    {['ID','Name','Contact','Address','GST No','PAN','Email','Added'].map(h => (
                       <th key={h} className="table-th">{h}</th>
                     ))}
                     <th className="table-th text-right">Actions</th>
@@ -75,6 +75,7 @@ export default function VendorsPage() {
                       <td className="table-td text-subtext">{v.contact || '—'}</td>
                       <td className="table-td text-subtext max-w-xs truncate">{v.address || '—'}</td>
                       <td className="table-td font-mono text-subtext">{v.gst || '—'}</td>
+                      <td className="table-td font-mono text-subtext">{v.pan || '—'}</td>
                       <td className="table-td text-subtext">{v.email || '—'}</td>
                       <td className="table-td text-subtext whitespace-nowrap">{new Date(v.created_at).toLocaleDateString('en-IN')}</td>
                       <td className="table-td text-right">
@@ -114,6 +115,7 @@ function VendorModal({ vendor, onClose, onSaved }: { vendor: Vendor | null; onCl
     address: vendor?.address ?? '',
     gst:     vendor?.gst     ?? '',
     email:   vendor?.email   ?? '',
+    pan:     vendor?.pan     ?? '',
   })
   const [loading, setLoading] = useState(false)
 
@@ -141,6 +143,7 @@ function VendorModal({ vendor, onClose, onSaved }: { vendor: Vendor | null; onCl
           <div><label className="label">Contact</label><input className="input" value={form.contact} onChange={e => setForm(f => ({ ...f, contact: e.target.value }))} /></div>
           <div><label className="label">Address</label><textarea className="input" rows={2} value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} /></div>
           <div><label className="label">GST Number</label><input className="input font-mono" value={form.gst} onChange={e => setForm(f => ({ ...f, gst: e.target.value }))} /></div>
+          <div><label className="label">PAN</label><input className="input font-mono uppercase" placeholder="ABCDE1234F" value={form.pan} onChange={e => setForm(f => ({ ...f, pan: e.target.value.toUpperCase() }))} /></div>
           <div><label className="label">Email</label><input className="input" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
           <div className="flex gap-2 pt-1">
             <button type="submit" className="btn-primary flex-1" disabled={loading}>{loading ? 'Saving…' : vendor ? 'Update Vendor' : 'Add Vendor'}</button>
