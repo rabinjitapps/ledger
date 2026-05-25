@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { date, bill_no, party, items, deductions = [], due_date, notes, account, fund_name } = body
+  const { date, bill_no, party, items, deductions = [], due_date, notes, account, fund_name, invoice_no, invoice_date, invoice_value, vendor_pan } = body
   
   if (!date || !bill_no || !party || !items?.length)
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   
   const { data: bill, error } = await db()
     .from('bills')
-    .insert({ date, bill_no, party, total, paid_amount: 0, due_date: due_date || null, status: 'UNPAID', notes, account, fund_name: fund_name || null, created_at: new Date().toISOString() })
+    .insert({ date, bill_no, party, total, paid_amount: 0, due_date: due_date || null, status: 'UNPAID', notes, account, fund_name: fund_name || null, invoice_no: invoice_no || null, invoice_date: invoice_date || null, invoice_value: invoice_value || null, vendor_pan: vendor_pan || null, created_at: new Date().toISOString() })
     .select()
     .single()
   
