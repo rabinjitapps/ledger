@@ -40,7 +40,22 @@ export async function POST(req: NextRequest) {
     created_at: new Date().toISOString()
   })
 
-  // 4. Deduct from account balance (interconnected effect: bill payment → account balance)
+  // 4. Write CR ledger entry for the payment
+  //    Bill paid = Credit (CR) — cash/bank goes out to settle the liability
+  const ledgerAccount = accountUsed || bill.account || bill.party
+  await db().from('ledger').insert({
+    date,
+    account: ledgerAccount,
+    type: 'CR',
+    amount: paymentAmount,
+    signed: Math.abs(paymentAmount),
+    narration: notes || `Bill #${bill.bill_no} payment — ${bill.party}`,
+    ref: bill.bill_no,
+    fund_name: bill.fund_name || null,
+    created_at: new Date().toISOString(),
+  })
+
+  // 5. Deduct from account balance (bill payment → account balance goes down)
   if (accountUsed) {
     const { data: acct } = await db().from('accounts').select('balance').eq('name', accountUsed).single()
     if (acct) {
@@ -49,13 +64,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 5. If bill has a fund, reflect payment in funds balance (interconnected effect: bill → fund)
+  // 6. If bill has a fund, reflect payment in funds balance via ledger (already handled above via fund_name on ledger entry)
+  //    Also adjust fund account balance if different from paying account
   if (bill.fund_name) {
     const { data: fund } = await db().from('funds').select('*').eq('name', bill.fund_name).single()
-    if (fund && fund.account) {
+    if (fund && fund.account && fund.account !== accountUsed) {
       const { data: fundAcct } = await db().from('accounts').select('balance').eq('name', fund.account).single()
-      if (fundAcct && fund.account !== accountUsed) {
-        // Only adjust fund account if it's different from the paying account
+      if (fundAcct) {
         const newBalance = Math.round((fundAcct.balance - paymentAmount) * 100) / 100
         await db().from('accounts').update({ balance: newBalance }).eq('name', fund.account)
       }
