@@ -15,6 +15,7 @@ interface FundBalance {
   totalCR: number
   totalDR: number
   net: number
+  outstanding_bills: number
 }
 
 export default function FundsPage() {
@@ -195,6 +196,7 @@ export default function FundsPage() {
                       <th className="text-left px-4 py-3 text-subtext font-medium">Account</th>
                       <th className="text-right px-4 py-3 text-subtext font-medium">Total CR</th>
                       <th className="text-right px-4 py-3 text-subtext font-medium">Total DR</th>
+                      <th className="text-right px-4 py-3 text-subtext font-medium">Outstanding Bills</th>
                       <th className="text-right px-4 py-3 text-subtext font-medium">Net Balance</th>
                     </tr>
                   </thead>
@@ -205,6 +207,7 @@ export default function FundsPage() {
                         <td className="px-4 py-3 text-text">{b.account || '—'}</td>
                         <td className="px-4 py-3 text-right font-mono text-success">{formatCurrency(b.totalCR)}</td>
                         <td className="px-4 py-3 text-right font-mono text-danger">{formatCurrency(b.totalDR)}</td>
+                        <td className="px-4 py-3 text-right font-mono text-warning">{b.outstanding_bills > 0 ? formatCurrency(b.outstanding_bills) : '—'}</td>
                         <td className={`px-4 py-3 text-right font-mono font-semibold ${b.net >= 0 ? 'text-success' : 'text-danger'}`}>
                           {formatCurrency(Math.abs(b.net))} {b.net >= 0 ? 'CR' : 'DR'}
                         </td>
